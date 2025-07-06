@@ -7,16 +7,28 @@ dotenv.config();
 const register = async (req, res) => {
   const { username, password } = req.body;
 
+  if (!username || !password) {
+    return res.status(400).json({ msg: "Username and password are required" });
+  }
+
   try {
     const user = await UserModel.findUserByUsername(username);
     if (user) return res.status(400).json({ msg: 'User already exists' });
 
     const hashed = await bcrypt.hash(password, 10);
-    const userId = await UserModel.createUser(username, hashed);
 
-    const token = jwt.sign({ user: { id: userId } }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const newUser = await UserModel.createUser(username, hashed);
 
-    res.json({ token });
+    const token = jwt.sign({ user: { id: newUser.id } }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: newUser.id,
+        username: newUser.username
+      },
+      token
+    });
   } catch (err) {
     res.status(500).send('Server error');
   }
