@@ -7,7 +7,11 @@ const findUserByUsername = async (username) => {
 
 const createUser = async (username, hashedPassword) => {
   const [result] = await pool.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword]);
-  return result.insertId;
+  const userId = result.insertId;
+
+  const [row] = await pool.query('SELECT id, username FROM users WHERE id = ?', [userId]);
+  
+  return row[0];
 };
 
 const findUserById = async (id) => {
