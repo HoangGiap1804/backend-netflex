@@ -5,6 +5,7 @@ import auth from '../middleware/authMiddleware.js'
 
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/refresh', auth, authController.refresh);
 router.get('/profile', auth, authController.getProfile);
 
 export default router;
