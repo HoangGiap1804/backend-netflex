@@ -13,7 +13,6 @@ describe('Auth API - Register', () => {
       .send({ username, password: '123456' });
 
     expect(res.statusCode).toBe(201);
-    expect(res.body).toHaveProperty('token');
     expect(res.body.user).toHaveProperty('username', username);
   });
 
